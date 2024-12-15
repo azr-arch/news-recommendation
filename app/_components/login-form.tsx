@@ -19,14 +19,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useUserRegistration } from "@/hooks/use-local-storage";
 import { countries } from "@/utils/countries";
 import { categories } from "@/utils/lib";
-import { InterestCategory } from "@/utils/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useFormStatus } from "react-dom";
-import { Controller, Form, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 interface LoginFormData {
     name: string;
@@ -45,9 +42,6 @@ export const LoginForm = () => {
         control,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>();
-
-    const { pending } = useFormStatus();
-    const { registerUser } = useUserRegistration();
 
     const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
         try {
@@ -70,7 +64,7 @@ export const LoginForm = () => {
 
             router.push("/dashboard");
         } catch (err) {
-            console.log("Something went wrong while registering user..");
+            console.log("Something went wrong while registering user..", err);
         }
     };
 

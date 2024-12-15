@@ -23,12 +23,8 @@ export default async function DashboarPage() {
         const resData = await res.json();
         data = resData?.results;
     } catch (error) {
-        console.log("Error in dashboard page");
+        console.log("Error in dashboard page", error);
     }
 
-    return (
-        <div>
-            <DashboardClient data={data} />
-        </div>
-    );
+    return <div>{data ? <DashboardClient data={data} /> : null}</div>;
 }

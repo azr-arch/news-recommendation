@@ -3,7 +3,6 @@ import { cache } from "react";
 import { decrypt } from "./session";
 import { redirect } from "next/navigation";
 import { dbConnect } from "./connect-db";
-import mongoose from "mongoose";
 import user from "@/models/user";
 
 export const verifySession = cache(async () => {
