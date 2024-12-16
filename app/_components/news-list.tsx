@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 import { initialData } from "@/lib/data";
 import { IArticle } from "@/lib/types";
+import { LoaderIcon } from "lucide-react";
 
 // Path to fallback image
 const fallbackImage = "/not-found.jpg";
@@ -69,21 +70,43 @@ function NewsItem({ article }: { article: IArticle }) {
 
 export function NewsList({ query }: { query: string }) {
     const [news, setNews] = useState<IArticle[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         (async () => {
-            const res = await fetch(query);
-            const data = await res.json();
+            setLoading(true);
+            try {
+                const res = await fetch(query);
+                const data = await res.json();
 
-            // If API crashes then use already fetched data stored lib/data.ts
-            setNews(data?.results || initialData);
+                // If API crashes then use already fetched data stored lib/data.ts
+                console.log({ data });
+
+                if (data.status === "success") {
+                    setNews(data?.results);
+                }
+
+                setNews(initialData.results as IArticle[]);
+            } catch (error) {
+                console.log("Error fetching news", error);
+                // Fallback to initial data
+                setNews([]);
+            } finally {
+                setLoading(false); // Set loading to false when fetching is done
+            }
         })();
-    });
+    }, []);
+
+    if (loading) {
+        return <LoaderIcon className="animate-spin size-8 absolute top-1/2 left-1/2" />; // Display loading message
+    }
+
+    console.log({ news });
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {news.length <= 0 ? (
-                <p className="">{"Articles not found"}</p>
+                <p className=" text-center ">No Articles found!, Please try again later.</p>
             ) : (
                 news.map((article) => <NewsItem key={article.article_id} article={article} />)
             )}
