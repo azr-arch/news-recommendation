@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const User = new mongoose.Schema(
     {
+        userId: String,
         name: String,
-        age: Number,
         country: String,
         interests: Array(String),
     },

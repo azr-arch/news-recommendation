@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -9,32 +14,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { countries } from "@/utils/countries";
-import { categories } from "@/utils/lib";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-interface LoginFormData {
-    name: string;
-    age: number;
-    country: string;
-    interests: string[];
-}
+import { LoginFormData } from "@/lib/types";
+import { CountrySelect } from "./form-components/country-select";
+import { InterestsSelect } from "./form-components/interest-select";
 
 export const LoginForm = () => {
     const [error, setError] = useState<null | string>(null);
-    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -42,8 +29,10 @@ export const LoginForm = () => {
         control,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>();
+    const router = useRouter();
 
     const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+        setError(null);
         try {
             const parsedData = JSON.stringify(data);
 
@@ -59,6 +48,7 @@ export const LoginForm = () => {
 
             if (!result?.success) {
                 alert("Login failed");
+                reset();
                 return;
             }
 
@@ -87,33 +77,6 @@ export const LoginForm = () => {
                             <p className="text-sm text-destructive">{errors.name.message}</p>
                         )}
                     </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="country">Country</Label>
-                        <Controller
-                            name="country"
-                            control={control}
-                            rules={{ required: "Country is required" }}
-                            render={({ field }) => (
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a country" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {countries.map((country) => (
-                                            <SelectItem key={country.code} value={country.code}>
-                                                {country.name}, {country.code}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
-                        />
-                        {errors.country && (
-                            <p className="text-sm text-destructive">{errors.country.message}</p>
-                        )}
-                    </div>
-
                     <div className="space-y-2">
                         <Label htmlFor="age">Age</Label>
                         <Input
@@ -130,50 +93,8 @@ export const LoginForm = () => {
                         )}
                     </div>
 
-                    <div className="space-y-3">
-                        <Label>Interests (select 1-5)</Label>
-                        <div className="grid grid-cols-3 gap-2">
-                            <Controller
-                                name="interests"
-                                control={control}
-                                rules={{
-                                    required: "Please select at least one interest",
-                                    validate: (value) =>
-                                        (value && value.length >= 1 && value.length <= 5) ||
-                                        "Please select between 1 and 5 interests",
-                                }}
-                                render={({ field }) => (
-                                    <>
-                                        {categories.map((category) => (
-                                            <div
-                                                key={category.id}
-                                                className="flex items-center space-x-2"
-                                            >
-                                                <Checkbox
-                                                    id={category.id}
-                                                    checked={field.value?.includes(category.id)}
-                                                    onCheckedChange={(checked) => {
-                                                        const updatedInterests = checked
-                                                            ? [...(field.value || []), category.id]
-                                                            : (field.value || []).filter(
-                                                                  (i: string) => i !== category.id
-                                                              );
-                                                        field.onChange(updatedInterests);
-                                                    }}
-                                                />
-                                                <Label htmlFor={category.id}>
-                                                    {category.label}
-                                                </Label>
-                                            </div>
-                                        ))}
-                                    </>
-                                )}
-                            />
-                        </div>
-                        {errors.interests && (
-                            <p className="text-sm text-destructive">{errors.interests.message}</p>
-                        )}
-                    </div>
+                    <CountrySelect control={control} errors={errors} />
+                    <InterestsSelect control={control} errors={errors} />
                 </CardContent>
                 <CardFooter className="space-x-2">
                     <Button disabled={isSubmitting} type="submit" className="w-full">

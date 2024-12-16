@@ -1,14 +1,14 @@
-// api/register/route.ts
-
 import { dbConnect } from "@/lib/connect-db";
-import { createSession } from "@/lib/session";
+import { addToCookies } from "@/lib/session";
 import user from "@/models/user";
 import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: Request) {
     try {
         // Parse the JSON body from the request
         const data = await req.json();
+
         // Validate the incoming data
         const { name, age, country, interests } = data;
 
@@ -17,23 +17,21 @@ export async function POST(req: Request) {
         }
 
         await dbConnect();
+        const userId = uuidv4();
 
-        const userData = new user({
+        const newUser = new user({
+            userId,
             name,
             country,
-            age,
             interests,
         });
 
-        await userData.save();
-        console.log("Registering user : ", name);
-
-        await createSession(name);
-        console.log("Creating session");
+        await newUser.save();
+        await addToCookies(userId);
 
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Error in registration API:", error);
-        return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+        return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
 }

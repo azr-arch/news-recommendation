@@ -1,13 +1,6 @@
 import { InterestCategory } from "./types";
 
-export const hasFilledForm = () => {
-    const userData = localStorage.getItem("userData");
-
-    if (userData) return true;
-    return false;
-};
-
-export const categories: { id: InterestCategory; label: String }[] = [
+export const categories: { id: InterestCategory; label: string }[] = [
     {
         id: "business",
         label: "Business",

@@ -1,30 +1,33 @@
-import { getUser } from "@/lib/current-user";
-import { DashboardClient } from "../_components/dashboard-client";
+import { redirect } from "next/navigation";
+
+import user from "@/models/user";
+import { dbConnect } from "@/lib/connect-db";
+import { currentUserId } from "@/lib/current-user";
+import { IUser } from "@/lib/types";
+
+import { News } from "../_components/news";
 
 export default async function DashboarPage() {
-    let data: any;
+    let currUser: IUser | null = null;
+    const userId = await currentUserId();
 
     try {
-        const currUser = await getUser();
+        await dbConnect();
 
-        // Building query
-        const { country, interests } = currUser;
-
-        // Construct the query using URLSearchParams
-        const queryParams = new URLSearchParams({
-            apikey: process.env.API_KEY || "",
-            country,
-            category: interests.join(","),
-        });
-
-        const apiUrl = `${process.env.NEWS_API}?${queryParams.toString()}`;
-
-        const res = await fetch(apiUrl);
-        const resData = await res.json();
-        data = resData?.results;
+        // Fetch currentUser
+        currUser = await user.findOne({ userId });
     } catch (error) {
         console.log("Error in dashboard page", error);
     }
 
-    return <div>{data ? <DashboardClient data={data} /> : null}</div>;
+    if (!currUser?.interests || !currUser?.country) {
+        console.log("Please login again");
+        redirect("/");
+    }
+
+    return (
+        <div>
+            <News data={{ interests: currUser.interests, country: currUser.country }} />
+        </div>
+    );
 }

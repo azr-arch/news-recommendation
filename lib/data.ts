@@ -1,4 +1,4 @@
-const data = {
+export const initialData = {
     status: "success",
     totalResults: 3385,
     results: [
