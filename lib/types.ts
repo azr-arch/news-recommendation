@@ -1,21 +1,11 @@
 export type InterestCategory =
     | "business"
-    | "crime"
-    | "domestic"
-    | "education"
+    | "general"
     | "entertainment"
-    | "environment"
-    | "food"
     | "health"
-    | "lifestyle"
-    | "other"
-    | "politics"
     | "science"
     | "sports"
-    | "technology"
-    | "top"
-    | "tourism"
-    | "world";
+    | "technology";
 
 export interface IUser {
     userId: string;
@@ -27,31 +17,16 @@ export interface IUser {
 }
 
 export interface IArticle {
-    article_id?: string;
     title?: string;
-    link?: string;
-    keywords?: string[];
-    creator?: string[];
-    video_url?: string | null;
+    url?: string;
     description?: string;
-    content?: string;
-    pubDate: string;
-    pubDateTZ?: string;
-    image_url?: string;
-    source_id?: string;
-    source_priority?: number;
-    source_name?: string;
-    source_url?: string;
-    source_icon?: string;
+    image?: string;
+    source?: string;
     language?: string;
-    country?: string[];
-    category?: string[];
-    ai_tag?: string;
-    sentiment?: string;
-    sentiment_stats?: string;
-    ai_region?: string;
-    ai_org?: string;
-    duplicate?: boolean;
+    country?: string;
+    category?: string;
+    published_at?: string;
+    author?: string;
 }
 
 export interface LoginFormData {

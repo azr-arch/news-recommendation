@@ -4,9 +4,10 @@ import { NewsList } from "./news-list";
 export const News = ({ data }: { data: { interests: string[]; country: string } }) => {
     // Construct the query using URLSearchParams
     const queryParams = new URLSearchParams({
-        apikey: process.env.API_KEY || "",
-        country: data.country,
-        category: data.interests.join(","),
+        access_key: process.env.API_KEY || "",
+        categories: data.interests.join(","),
+        countries: data.country,
+        languages: "en",
     });
 
     const apiUrl = `${process.env.NEWS_API}?${queryParams.toString()}`;

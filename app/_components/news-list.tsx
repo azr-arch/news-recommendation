@@ -18,14 +18,14 @@ function NewsItem({ article }: { article: IArticle }) {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <Card key={article.article_id} className="flex flex-col">
+        <Card className="flex flex-col">
             <CardHeader>
                 <CardTitle className="text-lg line-clamp-2">{article.title}</CardTitle>
             </CardHeader>
             <div className="relative aspect-ratio-box h-[250px]">
-                {article.image_url ? (
+                {article.image ? (
                     <Image
-                        src={imageError ? fallbackImage : article.image_url}
+                        src={imageError ? fallbackImage : article.image}
                         alt={article.title || ""}
                         fill
                         onError={() => setImageError(true)}
@@ -47,19 +47,21 @@ function NewsItem({ article }: { article: IArticle }) {
             <CardContent className="py-5 mt-auto">
                 <p className="text-sm text-gray-600 mb-2 line-clamp-3">{article.description}</p>
                 <div className="flex flex-wrap gap-2 mb-2">
-                    {article?.category?.map((cat) => (
-                        <Badge key={cat} variant="secondary" className="shadow-md">
-                            {cat}
-                        </Badge>
-                    ))}
+                    <Badge
+                        key={article.category}
+                        variant="secondary"
+                        className="shadow-md capitalize"
+                    >
+                        {article.category}
+                    </Badge>
                 </div>
                 <p className="text-xs text-gray-500">
-                    Published: {new Date(article.pubDate).toLocaleDateString()}
+                    Published: {new Date(article.published_at || "").toLocaleDateString()}
                 </p>
             </CardContent>
             <CardFooter>
                 <Button asChild className="w-full">
-                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                    <a href={article.url} target="_blank" rel="noopener noreferrer">
                         Read More
                     </a>
                 </Button>
@@ -79,14 +81,13 @@ export function NewsList({ query }: { query: string }) {
                 const res = await fetch(query);
                 const data = await res.json();
 
-                // If API crashes then use already fetched data stored lib/data.ts
-                console.log({ data });
-
-                if (data.status === "success") {
-                    setNews(data?.results);
+                if (data?.data) {
+                    setNews(data?.data);
+                    return;
                 }
 
-                setNews(initialData.results as IArticle[]);
+                // If API crashes then use already fetched data stored lib/data.ts
+                setNews(initialData.data as IArticle[]);
             } catch (error) {
                 console.log("Error fetching news", error);
                 // Fallback to initial data
@@ -108,7 +109,7 @@ export function NewsList({ query }: { query: string }) {
             {news.length <= 0 ? (
                 <p className=" text-center ">No Articles found!, Please try again later.</p>
             ) : (
-                news.map((article) => <NewsItem key={article.article_id} article={article} />)
+                news.map((article, idx) => <NewsItem key={idx} article={article} />)
             )}
         </div>
     );

@@ -72,7 +72,11 @@ export const LoginForm = () => {
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
-                        <Input id="name" {...register("name", { required: "Name is required" })} />
+                        <Input
+                            id="name"
+                            {...register("name", { required: "Name is required" })}
+                            disabled={isSubmitting}
+                        />
                         {errors.name && (
                             <p className="text-sm text-destructive">{errors.name.message}</p>
                         )}
@@ -87,14 +91,15 @@ export const LoginForm = () => {
                                 min: { value: 13, message: "You must be at least 13 years old" },
                                 max: { value: 100, message: "Please enter a valid age" },
                             })}
+                            disabled={isSubmitting}
                         />
                         {errors.age && (
                             <p className="text-sm text-destructive">{errors.age.message}</p>
                         )}
                     </div>
 
-                    <CountrySelect control={control} errors={errors} />
-                    <InterestsSelect control={control} errors={errors} />
+                    <CountrySelect control={control} errors={errors} disabled={isSubmitting} />
+                    <InterestsSelect control={control} errors={errors} disabled={isSubmitting} />
                 </CardContent>
                 <CardFooter className="space-x-2">
                     <Button disabled={isSubmitting} type="submit" className="w-full">

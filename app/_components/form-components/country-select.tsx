@@ -15,9 +15,10 @@ import { countries } from "@/lib/countries";
 type CountrySelectProps = {
     control: Control<LoginFormData>;
     errors: FieldErrors<LoginFormData>;
+    disabled?: boolean;
 };
 
-export const CountrySelect = ({ control, errors }: CountrySelectProps) => {
+export const CountrySelect = ({ control, errors, disabled }: CountrySelectProps) => {
     const [countryOptions, setCountryOptions] = useState<{ code: string; name: string }[]>([]);
 
     const loadCountryOptions = () => {
@@ -33,6 +34,7 @@ export const CountrySelect = ({ control, errors }: CountrySelectProps) => {
             <Controller
                 name="country"
                 control={control}
+                disabled={disabled}
                 rules={{ required: "Country is required" }}
                 render={({ field }) => (
                     <Select

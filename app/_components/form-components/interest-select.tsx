@@ -8,9 +8,10 @@ import { categories } from "@/lib/categories";
 type InterestsSelectProps = {
     control: Control<LoginFormData>;
     errors: FieldErrors<LoginFormData>;
+    disabled?: boolean;
 };
 
-export const InterestsSelect = ({ control, errors }: InterestsSelectProps) => {
+export const InterestsSelect = ({ control, errors, disabled }: InterestsSelectProps) => {
     return (
         <div className="space-y-3">
             <Label>Interests (select 1-5)</Label>
@@ -18,6 +19,7 @@ export const InterestsSelect = ({ control, errors }: InterestsSelectProps) => {
                 <Controller
                     name="interests"
                     control={control}
+                    disabled={disabled}
                     rules={{
                         required: "Please select at least one interest",
                         validate: (value) =>
