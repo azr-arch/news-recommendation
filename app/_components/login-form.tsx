@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { LoginFormData } from "@/lib/types";
 import { CountrySelect } from "./form-components/country-select";
 import { InterestsSelect } from "./form-components/interest-select";
+import { LoaderCircle } from "lucide-react";
 
 export const LoginForm = () => {
     const [error, setError] = useState<null | string>(null);
@@ -103,7 +104,11 @@ export const LoginForm = () => {
                 </CardContent>
                 <CardFooter className="space-x-2">
                     <Button disabled={isSubmitting} type="submit" className="w-full">
-                        Login
+                        {!isSubmitting ? (
+                            "Login"
+                        ) : (
+                            <LoaderCircle className="w-4 h-4 animate-spin text-white" />
+                        )}
                     </Button>
                     <Button
                         disabled={isSubmitting}
